@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign up | PLMun Reservation &amp; Borrowing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/layout.css">
+<link rel="stylesheet" href="../../../assets/css/components.css">
+<link rel="stylesheet" href="signup.css">
+</head>
+<body>
+<main class="stage">
+  <section class="hero-side" aria-hidden="true">
+    <div class="hero-copy">
+      <img src="../../../assets/img/logo.png" alt="" class="seal">
+      <p class="tag-line">Bayan. Serbisyo. Transform.</p>
+      <h1>One account for <em>every event</em> you run.</h1>
+      <p>Students, faculty and staff can reserve equipment, follow approvals, and review the service afterwards.</p>
+      <ol class="modlist">
+        <li>Client Booking &amp; Interactive Catalog</li>
+        <li>Digital Borrowing &amp; Dispatching</li>
+        <li>Smart Returning, Inspection &amp; Penalty</li>
+        <li>Advanced Inventory &amp; Asset Life-Cycle</li>
+        <li>Operational Analytics &amp; Revenue Intelligence</li>
+      </ol>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="box">
+      <h2>Create your account</h2>
+      <p class="muted">Your details are saved to the PLMun reservation database.</p>
+      <div id="msg"></div>
+      <form id="f" novalidate>
+        <div class="row name3">
+          <div class="field"><label class="f" for="last">Surname *</label><input id="last" type="text" autocomplete="family-name" maxlength="60" placeholder="Dela Cruz" required></div>
+          <div class="field"><label class="f" for="first">First name *</label><input id="first" type="text" autocomplete="given-name" maxlength="60" placeholder="Juan" required></div>
+          <div class="field"><label class="f" for="mi">M.I.</label><input id="mi" type="text" autocomplete="additional-name" maxlength="2" placeholder="A"></div>
+        </div>
+        <div class="field"><label class="f" for="email">Email *</label><input id="email" type="email" autocomplete="email" required></div>
+        <div class="row">
+          <div class="field"><label class="f" for="type">I am a *</label><select id="type"><option>Student</option><option>Faculty</option><option>Staff</option></select></div>
+          <div class="field"><label class="f" for="contact">Contact number</label><input id="contact" type="tel" autocomplete="tel" placeholder="09XXXXXXXXX"></div>
+        </div>
+        <div class="field"><label class="f" for="dept">Department / College</label><input id="dept" type="text" placeholder="e.g. CITCS"></div>
+        <div class="row" id="studentOnly">
+          <div class="field"><label class="f" for="course">Course</label><input id="course" type="text" placeholder="e.g. BSIT"></div>
+          <div class="field"><label class="f" for="year">Year level</label><select id="year"><option value="">Select</option><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label class="f" for="pw">Password *</label><input id="pw" type="password" autocomplete="new-password" minlength="6" required></div>
+          <div class="field"><label class="f" for="pw2">Confirm password *</label><input id="pw2" type="password" autocomplete="new-password" required></div>
+        </div>
+        <button class="btn block" id="go" type="submit">Create account</button>
+      </form>
+      <form id="vf" novalidate hidden>
+        <p class="muted" id="vinfo"></p>
+        <div class="field"><label class="f" for="code">Verification code</label><input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" style="letter-spacing:6px;font-size:1.4rem;text-align:center" required></div>
+        <button class="btn block" id="vgo" type="submit">Verify &amp; create account</button>
+        <p class="alt"><button type="button" class="linkbtn" id="resend" style="background:none;border:0;padding:0;color:var(--green-700);font:inherit;font-weight:700;cursor:pointer">Resend code</button> · <button type="button" class="linkbtn" id="back" style="background:none;border:0;padding:0;color:var(--green-700);font:inherit;font-weight:700;cursor:pointer">Use a different email</button></p>
+      </form>
+      <p class="alt">Already registered? <a href="../../../index.html">Log in</a></p>
+    </div>
+  </section>
+</main>
+<script src="../../../assets/js/app.js"></script>
+<script src="signup.js"></script>
+</body>
+</html>

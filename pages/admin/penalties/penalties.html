@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penalties | PLMun Reservation &amp; Borrowing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/layout.css">
+<link rel="stylesheet" href="../../../assets/css/components.css">
+<link rel="stylesheet" href="penalties.css">
+</head>
+<body>
+<div id="nav"></div>
+<main class="page">
+  <div class="page-head"><div><h1 style="font-size:2.2rem">Penalties</h1><p>Track late, damage and loss penalties and record payments.</p></div><button class="btn" id="add">+ Add manual penalty</button></div>
+  <div class="strip" id="strip"></div>
+  <div class="chips" id="flt" style="margin-bottom:14px"></div>
+  <div class="table-wrap"><table><thead><tr><th>Assessed</th><th>Borrower</th><th>Event</th><th>Type</th><th>Reason</th><th class="right">Amount</th><th>Status</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+</main>
+<script src="../../../assets/js/app.js"></script>
+<script src="penalties.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+/* Client dashboard: only what is specific to this page. Shared widgets live in assets/css/charts.css */
+.mods .mod em{font-size:.8rem;font-family:var(--body);font-weight:700;color:var(--green-700)}
+.mod.static{cursor:default}
+.rate-alert{background:var(--gold-bg);color:#6b4a00}.rate-alert:hover{background:#f8e5a8}

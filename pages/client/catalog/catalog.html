@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catalog | PLMun Reservation &amp; Borrowing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/layout.css">
+<link rel="stylesheet" href="../../../assets/css/components.css">
+<link rel="stylesheet" href="catalog.css">
+</head>
+<body>
+<div id="nav"></div>
+<main class="page">
+  <div class="page-head"><div><h1 style="font-size:2.2rem">Equipment catalog</h1><p>Find what you need and check how many are free for your event time.</p></div>
+    <a class="btn gold" href="../reserve/reserve.html">Review request <span class="pip" id="cartPip2" hidden>0</span></a></div>
+
+  <div class="card toolbar">
+    <div class="field grow"><label class="f" for="q">Search</label><input type="search" id="q" placeholder="Chairs, microphone, projector…"></div>
+    <div class="field"><label class="f" for="d">Event date</label><input type="date" id="d"></div>
+    <div class="field"><label class="f" for="s">From</label><input type="time" id="s"></div>
+    <div class="field"><label class="f" for="e">Until</label><input type="time" id="e"></div>
+    <div class="field"><label class="f" for="sort">Sort</label><select id="sort"><option value="name">Name</option><option value="pop">Most borrowed</option><option value="avail">Most available</option></select></div>
+  </div>
+  <div class="chips" id="cats" role="group" aria-label="Categories"></div>
+  <p class="muted small" id="winNote"></p>
+  <div class="grid" id="grid"></div>
+</main>
+<footer class="foot" id="foot"></footer>
+<script src="../../../assets/js/app.js"></script>
+<script src="catalog.js"></script>
+</body>
+</html>

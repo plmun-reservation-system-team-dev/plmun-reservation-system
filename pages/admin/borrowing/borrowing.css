@@ -1,0 +1,3 @@
+td ul{margin:0;padding-left:16px}
+.rl{display:grid;grid-template-columns:1fr 80px 130px;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.rl:first-of-type{border-top:0}.rl select,.rl input{padding:8px 10px}

@@ -1,0 +1,4 @@
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:22px}
+.sum div{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow)}
+.sum b{display:block;font:800 1.8rem var(--display)}.sum span{color:var(--muted);font-size:.9rem}
+.sum .due b{color:var(--red)}

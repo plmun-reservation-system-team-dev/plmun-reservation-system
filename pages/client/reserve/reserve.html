@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reserve | PLMun Reservation &amp; Borrowing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/layout.css">
+<link rel="stylesheet" href="../../../assets/css/components.css">
+<link rel="stylesheet" href="reserve.css">
+</head>
+<body>
+<div id="nav"></div>
+<main class="page">
+  <div class="page-head"><div><h1 style="font-size:2.2rem">Reservation request</h1><p>Review your items, then tell us about your event.</p></div></div>
+  <div id="block"></div>
+  <div class="layout">
+    <section class="card">
+      <h3>1. Equipment</h3>
+      <div id="lines"></div>
+      <a class="btn ghost sm" href="../catalog/catalog.html">+ Add more equipment</a>
+    </section>
+    <form class="card" id="f" novalidate>
+      <h3>2. Event details</h3>
+      <div class="field"><label class="f" for="name">Event name *</label><input id="name" type="text" maxlength="150" required></div>
+      <div class="row">
+        <div class="field"><label class="f" for="date">Event date *</label><input id="date" type="date" required></div>
+        <div class="field"><label class="f" for="s">Start *</label><input id="s" type="time" value="08:00" required></div>
+        <div class="field"><label class="f" for="e">End / return by *</label><input id="e" type="time" value="17:00" required></div>
+      </div>
+      <div class="field"><label class="f" for="loc">Venue *</label><input id="loc" type="text" maxlength="150" placeholder="e.g. Covered Court, AVR, Room 301" required></div>
+      <div class="field"><label class="f" for="purpose">Purpose / description</label><textarea id="purpose" placeholder="What is the event for?"></textarea></div>
+      <div id="avail"></div>
+      <div id="msg"></div>
+      <button class="btn block" id="go" type="submit">Submit request</button>
+    </form>
+  </div>
+  <aside class="card flat policy">
+    <h3>Borrowing rules</h3>
+    <ul>
+      <li>Requests are reviewed by the Property Office. You will see the decision under <b>My Reservations</b>.</li>
+      <li>Items must be returned by the end time you set. Late returns cost <b id="fee">₱50.00</b> per hour.</li>
+      <li>Damaged or lost items are assessed a penalty by the Property Office.</li>
+      <li>Unpaid penalties block new reservations until settled.</li>
+    </ul>
+  </aside>
+</main>
+<footer class="foot" id="foot"></footer>
+<script src="../../../assets/js/app.js"></script>
+<script src="reserve.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Returns & Inspection | PLMun Reservation &amp; Borrowing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/layout.css">
+<link rel="stylesheet" href="../../../assets/css/components.css">
+<link rel="stylesheet" href="returns.css">
+</head>
+<body>
+<div id="nav"></div>
+<main class="page">
+  <div class="page-head"><div><h1 style="font-size:2.2rem">Returns, inspection & penalties</h1><p>Receive items, inspect their condition and assess penalties automatically.</p></div></div>
+  <section class="card" id="form">
+    <div class="field" style="max-width:520px"><label class="f" for="sel">Open borrowing</label><select id="sel"></select></div>
+    <div id="detail"></div>
+  </section>
+  <h2 style="margin-top:34px">Return history</h2>
+  <div class="table-wrap"><table><thead><tr><th>Returned</th><th>Borrower / event</th><th>Items</th><th>Result</th><th>Received by</th></tr></thead><tbody id="hist"></tbody></table></div>
+</main>
+<script src="../../../assets/js/app.js"></script>
+<script src="returns.js"></script>
+</body>
+</html>

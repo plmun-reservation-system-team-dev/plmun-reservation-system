@@ -1,0 +1,5 @@
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px}
+.strip div{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
+.strip b{display:block;font:800 1.7rem var(--display)}.strip span{color:var(--muted);font-size:.88rem}
+.strip .due b{color:var(--red)}.strip .got b{color:var(--green)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}

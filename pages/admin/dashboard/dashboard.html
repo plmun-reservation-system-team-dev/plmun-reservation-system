@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard | PLMun Reservation &amp; Borrowing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/layout.css">
+<link rel="stylesheet" href="../../../assets/css/components.css">
+<link rel="stylesheet" href="../../../assets/css/charts.css">
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<div id="nav"></div>
+<main class="page">
+  <div class="page-head"><div><h1 style="font-size:2.2rem">Operations dashboard</h1><p>Live view of requests, borrowings, penalties and revenue for the Property Office.</p></div><button class="btn ghost sm" onclick="print()">Print report</button></div>
+
+  <section class="mods" id="mods"></section>
+
+  <h2 class="sec">Operations</h2>
+  <section class="kpis" id="ops"></section>
+  <h2 class="sec">Revenue intelligence</h2>
+  <section class="kpis" id="rev"></section>
+
+  <h2 class="sec">Analytics</h2>
+  <div class="grid3">
+    <section class="card"><div class="card-h"><h3><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Reservation Trends</h3><span class="muted small">Last 6 months</span></div><div id="trend"></div></section>
+    <section class="card"><div class="card-h"><h3><svg viewBox="0 0 24 24"><path d="M12 3v9h9"/><path d="M20.5 15A9 9 0 1112 3"/></svg>Equipment Usage</h3></div><div id="usage"></div></section>
+    <section class="card"><div class="card-h"><h3>Most Borrowed Equipment</h3><span class="muted small">bookings</span></div><div id="top"></div></section>
+  </div>
+  <div class="grid2">
+    <section class="card"><div class="card-h"><h3>Penalty revenue collected</h3><span class="muted small">per month</span></div><div id="revm"></div></section>
+    <section class="card"><div class="card-h"><h3>Penalty breakdown</h3></div><div id="ptype"></div><div class="card-h" style="margin-top:20px"><h3>Reservation status mix</h3></div><div id="mix"></div></section>
+  </div>
+  <div class="grid2">
+    <section class="card"><div class="card-h"><h3>Inventory needing attention</h3><a class="link-all" href="../inventory/inventory.html">Open inventory →</a></div><div id="att"></div></section>
+    <section class="card"><div class="card-h"><h3>Most active borrowers</h3><a class="link-all" href="../users/users.html">All users →</a></div><div id="who"></div></section>
+  </div>
+  <section class="card"><div class="card-h"><h3><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8M3 3v5h5M12 8v4l3 2"/></svg>Recent Activities</h3></div><div class="acts" id="acts"></div></section>
+</main>
+<script src="../../../assets/js/app.js"></script>
+<script src="../../../assets/js/charts.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>
