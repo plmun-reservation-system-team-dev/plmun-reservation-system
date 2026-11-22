@@ -17,8 +17,8 @@ window.PLMUN_CONFIG = {
     anonKey: 'sb_publishable_Plf-BD97H-Q-p8EGP10tMg_OkXMgeRz',   // e.g. 'eyJhbGciOi...' (anon public key)
   },
   emailjs: {
-    serviceId: '',    // e.g. 'service_abc123'
-    templateId: '',   // e.g. 'template_xyz789'
-    publicKey: '',    // e.g. 'AbCdEfGhIjKlMnOp'
+    serviceId: 'service_malnn7n',    // e.g. 'service_abc123'
+    templateId: 'template_l3m8c39',   // e.g. 'template_xyz789'
+    publicKey: 'Hv2yYSrvHaR0KR3r6Hv2yYSrvHaR0KR3r6',    // e.g. 'AbCdEfGhIjKlMnOp'
   },
 };
