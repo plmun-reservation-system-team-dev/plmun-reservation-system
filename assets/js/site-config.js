@@ -19,6 +19,6 @@ window.PLMUN_CONFIG = {
   emailjs: {
   serviceId:  'service_malnn7n',
   templateId: 'template_l3m8c39',
-  publicKey:  'Hv2yYSrvHaR0KR3r6'
+  publicKey:  'oLYLgqMlNzifaR_XX'
   },
 };
