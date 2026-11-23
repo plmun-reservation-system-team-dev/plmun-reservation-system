@@ -1,6 +1,26 @@
 /* PLMun Reservation & Borrowing - shared helpers (loaded on every page) */
 const App = (() => {
   const ROOT = document.currentScript.src.replace(/assets\/js\/app\.js.*$/, '');
+
+  // ---- loading screen: logo + spinner, shown while the page and its data load ----
+  const loader = (() => {
+    const css = document.createElement('style');
+    css.textContent = '#plmunLoader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#f8f4ea;transition:opacity .35s ease,visibility .35s}'
+      + '#plmunLoader.off{opacity:0;visibility:hidden;pointer-events:none}'
+      + '#plmunLoader img{width:84px;height:84px;object-fit:contain}'
+      + '#plmunLoader .ring{width:38px;height:38px;border:4px solid #e3dcc6;border-top-color:#1a4d2e;border-radius:50%;animation:plmunSpin .8s linear infinite}'
+      + '#plmunLoader p{margin:0;font:600 14px/1.2 system-ui,sans-serif;color:#1a4d2e;letter-spacing:.03em}'
+      + '@keyframes plmunSpin{to{transform:rotate(360deg)}}'
+      + '@media (prefers-reduced-motion:reduce){#plmunLoader .ring{animation-duration:2.4s}}';
+    document.head.append(css);
+    const el = document.createElement('div');
+    el.id = 'plmunLoader'; el.setAttribute('role', 'status'); el.setAttribute('aria-live', 'polite');
+    el.innerHTML = '<img src="' + ROOT + 'assets/img/logo.png" alt=""><div class="ring"></div><p>Loading…</p>';
+    document.body.prepend(el);
+    const hide = () => { el.classList.add('off'); setTimeout(() => el.remove(), 500); };
+    setTimeout(hide, 8000);   // safety net: never trap the visitor behind the loader
+    return { hide };
+  })();
   // page key -> folder under pages/ (the file is <folder-name>/<folder-name>.html)
   const ROUTES = {
     login: 'auth/login', signup: 'auth/signup', 'forgot-password': 'auth/forgot-password',
@@ -189,7 +209,7 @@ const App = (() => {
     { n: 5, title: 'Operational Analytics & Revenue Intelligence', desc: 'Trends, top equipment and penalty revenue at a glance.' },
   ];
 
-  async function init({ need = 'user', active = '' } = {}) {
+  async function initPage({ need = 'user', active = '' } = {}) {
     let user = null;
     try { user = (await api('auth.php?action=me')).user; } catch (e) { toast(e.message, true); }
     const go = p => location.replace(url(p));
@@ -251,6 +271,8 @@ const App = (() => {
     document.head.append(Object.assign(document.createElement('script'), { src: asset('assets/js/chatbot.js'), defer: true }));
     return user;
   }
+  // hides the loading screen once the page frame is ready (a redirect keeps it up until the next page opens)
+  const init = async opts => { try { return await initPage(opts); } finally { loader.hide(); } };
   return { ROOT, IC, MODULES, url, asset, api, post, esc, money, date, time, datetime, badge, stars, today, icon, iconSrc, picture, thumb, cart, toast, modal, equipmentModal, busy, init, dt };
 })();
 
