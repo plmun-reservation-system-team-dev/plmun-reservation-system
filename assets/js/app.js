@@ -62,7 +62,36 @@ const App = (() => {
   })());
   const isLocal = () => backend().then(b => !!b);
 
-  async function api(path, { method = 'GET', body, form } = {}) {
+  // ---- busy indicator: pressing a button that talks to the server shows a spinner so the app never looks frozen ----
+  const wait = (() => {
+    const css = document.createElement('style');
+    css.textContent = '#plmunWait{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;background:rgba(248,244,234,.55);cursor:progress}'
+      + '#plmunWait.on{display:flex}'
+      + '#plmunWait .pw{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px 20px;box-shadow:0 8px 30px rgba(0,0,0,.18);font:600 14px/1.2 system-ui,sans-serif;color:#1a4d2e}'
+      + '#plmunWait .ring{width:22px;height:22px;border:3px solid #e3dcc6;border-top-color:#1a4d2e;border-radius:50%;animation:plmunSpin .8s linear infinite}'
+      + '#plmunBar{position:fixed;top:0;left:0;height:3px;width:0;z-index:9001;background:#f4c95d;opacity:0;transition:width .6s ease,opacity .3s}'
+      + '#plmunBar.on{opacity:1;width:80%}'
+      + '@keyframes plmunSpin{to{transform:rotate(360deg)}}';
+    document.head.append(css);
+    let box, bar, wShown = 0, rShown = 0;
+    const make = () => {
+      if (box) return;
+      box = document.createElement('div'); box.id = 'plmunWait'; box.setAttribute('role', 'status');
+      box.innerHTML = '<div class="pw"><div class="ring"></div><span>Please wait…</span></div>';
+      bar = document.createElement('div'); bar.id = 'plmunBar';
+      document.body.append(box, bar);
+    };
+    const paint = () => { box.classList.toggle('on', wShown > 0); bar.classList.toggle('on', rShown > 0); };
+    // a request only counts as "slow" after a short delay, so quick actions never flash the spinner
+    return write => {
+      make();
+      let shown = false, over = false;
+      const t = setTimeout(() => { if (over) return; shown = true; write ? wShown++ : rShown++; paint(); }, write ? 150 : 500);
+      return () => { over = true; clearTimeout(t); if (shown) { write ? wShown-- : rShown--; paint(); } };
+    };
+  })();
+
+  async function apiCall(path, { method = 'GET', body, form } = {}) {
     const opt = { method, credentials: 'same-origin', headers: {} };
     if (body) { opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); opt.method = method === 'GET' ? 'POST' : method; }
     if (form) { opt.body = form; opt.method = 'POST'; }
@@ -78,6 +107,10 @@ const App = (() => {
     if (!res.ok || j.ok === false) { const err = new Error(j.error || 'Something went wrong.'); err.status = res.status; throw err; }
     return j;
   }
+  const api = async (path, o = {}) => {
+    const done = wait(!!(o.body || o.form) || (o.method && o.method !== 'GET'));
+    try { return await apiCall(path, o); } finally { done(); }
+  };
   const post = (path, body) => api(path, { method: 'POST', body });
 
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
