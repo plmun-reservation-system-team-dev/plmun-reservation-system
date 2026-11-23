@@ -2,21 +2,27 @@
 const App = (() => {
   const ROOT = document.currentScript.src.replace(/assets\/js\/app\.js.*$/, '');
 
-  // ---- loading screen: logo + spinner, shown while the page and its data load ----
+  // ---- loading screen: logo, title, loading text and a green ldrs "zoomies" animation ----
   const loader = (() => {
     const css = document.createElement('style');
-    css.textContent = '#plmunLoader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#f8f4ea;transition:opacity .35s ease,visibility .35s}'
+    css.textContent = '#plmunLoader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#f8f4ea;transition:opacity .35s ease,visibility .35s}'
       + '#plmunLoader.off{opacity:0;visibility:hidden;pointer-events:none}'
-      + '#plmunLoader img{width:84px;height:84px;object-fit:contain}'
-      + '#plmunLoader .ring{width:38px;height:38px;border:4px solid #e3dcc6;border-top-color:#1a4d2e;border-radius:50%;animation:plmunSpin .8s linear infinite}'
-      + '#plmunLoader p{margin:0;font:600 14px/1.2 system-ui,sans-serif;color:#1a4d2e;letter-spacing:.03em}'
-      + '@keyframes plmunSpin{to{transform:rotate(360deg)}}'
-      + '@media (prefers-reduced-motion:reduce){#plmunLoader .ring{animation-duration:2.4s}}';
+      + '#plmunLoader img{width:96px;height:96px;object-fit:contain;margin-bottom:6px}'
+      + '#plmunLoader h2{margin:0;font:800 22px/1.2 "Bricolage Grotesque",system-ui,sans-serif;color:#1a4d2e;letter-spacing:.01em;text-align:center}'
+      + '#plmunLoader p{margin:0 0 14px;font:500 14px/1.2 system-ui,sans-serif;color:#5b6b5f;letter-spacing:.03em}'
+      + '#plmunLoader l-zoomies{display:block}';
     document.head.append(css);
     const el = document.createElement('div');
     el.id = 'plmunLoader'; el.setAttribute('role', 'status'); el.setAttribute('aria-live', 'polite');
-    el.innerHTML = '<img src="' + ROOT + 'assets/img/logo.png" alt=""><div class="ring"></div><p>Loading…</p>';
+    el.innerHTML = '<img src="' + ROOT + 'assets/img/logo.png" alt="">'
+      + '<h2>PLMUN Reservation System</h2>'
+      + '<p>Loading, please wait…</p>'
+      + '<l-zoomies size="120" stroke="5" bg-opacity="0.15" speed="1.4" color="#1a4d2e"></l-zoomies>';
     document.body.prepend(el);
+    // load the ldrs "zoomies" web component (auto-registers itself once loaded)
+    const lib = document.createElement('script');
+    lib.type = 'module'; lib.src = 'https://cdn.jsdelivr.net/npm/ldrs@1.0.2/dist/auto/zoomies.js';
+    document.head.append(lib);
     const hide = () => { el.classList.add('off'); setTimeout(() => el.remove(), 500); };
     setTimeout(hide, 8000);   // safety net: never trap the visitor behind the loader
     return { hide };
