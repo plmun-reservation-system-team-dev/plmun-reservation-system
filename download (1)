@@ -1,7 +1,0 @@
-# private settings: never publish
-config/config.local.php
-
-# local/OS junk
-.DS_Store
-Thumbs.db
-.vscode/
