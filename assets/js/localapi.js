@@ -261,12 +261,40 @@ window.LocalAPI = (() => {
     return out;
   }
 
-  E['users.php'] = async ({ method, body }) => {
+  const siteLogin = () => location.href.split('/pages/')[0].replace(/[?#].*$/, '').replace(/\/$/, '') + '/index.html';
+  async function emailDecision(u, approved, reason) {
+    const name = fullName(u);
+    const html = approved
+      ? shell(`<p>Hi ${h(u.first_name)},</p><p>Good news! The Property Office has <b>approved your account</b>. It is ready to use.</p>
+          <p>You can now log in with your email and password and start reserving equipment.</p>
+          <p><a href="${h(siteLogin())}" style="display:inline-block;background:#0e3a23;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:700">Log in</a></p>`)
+      : shell(`<p>Hi ${h(u.first_name)},</p><p>We could not approve your PLMun account request.</p>
+          ${reason ? `<p><b>Note from the office:</b> ${h(reason)}</p>` : ''}
+          <p>Please double-check that all the information you entered is correct (your name, ID number and a clear photo of your PLMun ID), or visit the Property Office for further assistance.</p>`);
+    const text = approved
+      ? `Hi ${u.first_name},\n\nGood news! The Property Office has approved your account. It is ready to use.\nLog in here: ${siteLogin()}\n\nPLMun Property Office`
+      : `Hi ${u.first_name},\n\nWe could not approve your PLMun account request.${reason ? `\nNote from the office: ${reason}` : ''}\nPlease double-check that all the information you entered is correct (your name, ID number and a clear photo of your PLMun ID), or visit the Property Office for further assistance.\n\nPLMun Property Office`;
+    return sendMail(u.email, approved ? 'Your PLMun account is ready' : 'Your PLMun account request was not approved', html, text, name);
+  }
+
+  E['users.php'] = async ({ method, q, body }) => {
     needAdmin();
+    if (method === 'GET' && q && q.get('photo')) {   // the ID photo of one user (loaded on demand because pictures are big)
+      const uid = +q.get('photo');
+      return { photo: CLOUD() ? await rpc('get_id_photo', { p_user_id: uid }) : (find(db.users, 'user_id', uid) || {}).id_photo || null };
+    }
+    if (body.action === 'decide') {   // approve or reject a new account request, then e-mail the person
+      const u = find(db.users, 'user_id', +body.id) || fail('User not found.', 404);
+      if (u.account_status !== 'Pending') fail('This account request was already reviewed.');
+      const approve = body.decision === 'approve';
+      u.account_status = approve ? 'Active' : 'Rejected';
+      const [sent, msg] = await emailDecision(u, approve, s(body.reason).slice(0, 300));
+      return { emailed: sent, email_message: msg };
+    }
     if (method === 'GET') return { users: db.users.map(u => ({ ...withName(u), reservations: db.res.filter(r => r.user_id === u.user_id).length, unpaid: unpaidFor(u.user_id) }))
       .sort((a, b) => a.last_name.localeCompare(b.last_name) || a.first_name.localeCompare(b.first_name)) };
     const id = +body.id;
-    if (body.action === 'status' && ['Pending', 'Active', 'Suspended', 'Deactivated'].includes(body.status)) { const u = find(db.users, 'user_id', id); if (u) u.account_status = body.status; return {}; }
+    if (body.action === 'status' && ['Pending', 'Active', 'Rejected', 'Suspended', 'Deactivated'].includes(body.status)) { const u = find(db.users, 'user_id', id); if (u) u.account_status = body.status; return {}; }
     if (body.action === 'delete') {
       const u = find(db.users, 'user_id', id) || fail('User not found.', 404);
       const n = db.res.filter(r => r.user_id === id).length;
@@ -742,7 +770,7 @@ window.LocalAPI = (() => {
   const toSession = j => ({ access_token: j.access_token, refresh_token: j.refresh_token, expires_at: j.expires_at || Math.floor(Date.now() / 1000) + (j.expires_in || 3600) });
   async function rpc(fn, args = {}) {
     const token = await accessToken();
-    if (!token && fn !== 'email_registered') fail('Please log in first.', 401);
+    if (!token && fn !== 'email_registered' && fn !== 'id_number_registered') fail('Please log in first.', 401);
     try { return await sbFetch('/rest/v1/rpc/' + fn, { body: args, token }); }
     catch (e) { if (e.status === 401 || e.code === 'PGRST301') { sbSet(null); cloudMe = null; fail('Your session expired. Please log in again.', 401); } throw e; }
   }
@@ -793,6 +821,7 @@ window.LocalAPI = (() => {
     }
   }
 
+  let idPhoto = null;   // ID photo of the sign-up in progress (also copied into sessionStorage in case the page reloads)
   async function cloudAuth(action, body) {
     if (action === 'me') {
       if (!await accessToken()) return { user: null };
@@ -804,7 +833,7 @@ window.LocalAPI = (() => {
         a.unpaid = unpaidFor(a.id);
         a.notify = db.pen.filter(p => p.penalty_status === 'Unpaid').length
           + db.bor.filter(b => b.borrowing_status === 'Overdue' && find(db.res, 'reservation_id', b.reservation_id)?.user_id === a.id).length;
-      } else a.notify = db.res.filter(r => r.reservation_status === 'Pending').length + db.bor.filter(b => b.borrowing_status === 'Overdue').length;
+      } else a.notify = db.res.filter(r => r.reservation_status === 'Pending').length + db.bor.filter(b => b.borrowing_status === 'Overdue').length + db.users.filter(u => u.account_status === 'Pending').length;
       return { user: a };
     }
     if (action === 'logout') {
@@ -827,7 +856,9 @@ window.LocalAPI = (() => {
       if (!cloudMe || cloudMe.role !== role) { sbSet(null); cloudMe = null; fail('Wrong email or password.', 401); }
       if (role === 'user') {
         const st = find(db.users, 'user_id', cloudMe.id).account_status;
-        const msg = { Pending: 'Your account is still waiting for approval.', Suspended: 'Your account is suspended. Please see the Property Office.', Deactivated: 'Your account is deactivated.' };
+        const msg = { Pending: 'Your account request is still waiting for approval by the Property Office. We will email you as soon as it is approved.',
+          Rejected: 'Your account request was not approved. Please double-check that all your details and your ID photo are correct, or visit the Property Office for assistance.',
+          Suspended: 'Your account is suspended. Please see the Property Office.', Deactivated: 'Your account is deactivated.' };
         if (msg[st]) { sbSet(null); cloudMe = null; fail(msg[st], 403); }
       }
       return { user: { ...cloudMe } };
@@ -842,11 +873,17 @@ window.LocalAPI = (() => {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) fail('Please enter a valid email address.');
       if (pass.length < 6) fail('Password must be at least 6 characters.');
       if (contact && !/^[0-9+\-\s]{7,20}$/.test(contact)) fail('Contact number looks invalid.');
+      const idNo = s(body.id_number), photo = String(body.id_photo ?? '');
+      if (!idNo) fail(type === 'Student' ? 'Please enter your student ID number.' : 'Please enter your employee ID number.');
+      if (!/^[A-Za-z0-9][A-Za-z0-9\-\/ ]{2,28}$/.test(idNo)) fail('The ID number looks invalid. Use only letters, numbers and dashes.');
+      if (!/^data:image\/(jpeg|png|webp);base64,/.test(photo)) fail('Please upload a photo of your PLMun ID.');
+      if (photo.length > 1400000) fail('That ID photo is too large. Please choose a smaller picture.');
       if (await rpc('email_registered', { p_email: email })) fail('That email is already registered.', 409);
+      if (await rpc('id_number_registered', { p_id: idNo })) fail('That ID number is already used by another account. If this is a mistake, please visit the Property Office.', 409);
       let j;
       try {
         j = await sbFetch('/auth/v1/signup', { body: { email, password: pass, data: { last_name: last, first_name: first, middle_initial: mi, user_type: type, contact_number: contact,
-          department: s(body.department), course: type === 'Student' ? s(body.course) : '', year_level: type === 'Student' ? s(body.year_level) : '' } } });
+          department: s(body.department), course: type === 'Student' ? s(body.course) : '', year_level: type === 'Student' ? s(body.year_level) : '', id_number: idNo } } });
       } catch (e) {
         if (/already registered/i.test(e.message) || e.code === 'user_already_exists') fail('That email is already registered.', 409);
         if (e.status === 429 || /rate limit/i.test(e.message)) fail('Too many emails were sent just now. Please wait a few minutes and try again.', 429);
@@ -855,7 +892,8 @@ window.LocalAPI = (() => {
       }
       const u = (j && j.user) || j;
       if (u && Array.isArray(u.identities) && u.identities.length === 0) fail('That email is already registered.', 409);
-      try { sessionStorage.setItem(PENDING, JSON.stringify({ email, sent_at: Date.now() })); } catch (e) {}
+      idPhoto = photo;   // kept until the e-mail code is verified; the photo is saved with the profile at that moment
+      try { sessionStorage.setItem(PENDING, JSON.stringify({ email, sent_at: Date.now(), id_photo: photo })); } catch (e) { try { sessionStorage.setItem(PENDING, JSON.stringify({ email, sent_at: Date.now() })); } catch (e2) {} }
       return { verify: true, email, minutes: 60, resend_after: VERIFY_RESEND_SECONDS };
     }
     if (action === 'resend_code') {
@@ -877,9 +915,11 @@ window.LocalAPI = (() => {
         catch (e) { if (type === 'signup') fail('That code is wrong or has expired. Try again, or tap “Resend code” to get a new one.', 401); }
       }
       const token = j.access_token;
-      try { await sbFetch('/rest/v1/rpc/ensure_profile', { body: {}, token }); } finally { try { await sbFetch('/auth/v1/logout', { token }); } catch (e) {} }
-      setPending(null);
-      return { message: 'Email verified. Account created. You can log in now.' };
+      // email is now confirmed: this creates the profile as "Pending" and attaches the ID photo, so the request reaches the admin
+      const photo = idPhoto || p.id_photo || null;
+      try { await sbFetch('/rest/v1/rpc/ensure_profile', { body: photo ? { p_id_photo: photo } : {}, token }); } finally { try { await sbFetch('/auth/v1/logout', { token }); } catch (e) {} }
+      setPending(null); idPhoto = null;
+      return { message: 'Email verified. Your account request was sent to the Property Office. We will email you once it is approved.' };
     }
     if (action === 'forgot_password') {
       const email = s(body.email).toLowerCase();
