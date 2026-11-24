@@ -7,7 +7,7 @@ document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
   $('#email').placeholder = role === 'admin' ? 'admin@plmun.edu.ph' : 'you@plmun.edu.ph';
 });
 if (new URLSearchParams(location.search).has('reset')) $('#msg').innerHTML = '<div class="ok">Password updated! Log in with your new password.</div>';
-else if (new URLSearchParams(location.search).has('registered')) $('#msg').innerHTML = '<div class="ok">Account created! Log in with your email and password.</div>';
+else if (new URLSearchParams(location.search).has('registered')) $('#msg').innerHTML = '<div class="ok">Email verified! Your account request was sent to the Property Office. We will email you once it is approved, then you can log in.</div>';
 $('#f').onsubmit = async e => {
   e.preventDefault();
   const email = $('#email').value.trim(), password = $('#pw').value;
