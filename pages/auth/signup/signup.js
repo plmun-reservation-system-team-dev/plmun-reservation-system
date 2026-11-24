@@ -1,7 +1,11 @@
 App.init({ need: 'guest' });
 const $ = s => document.querySelector(s);
 const show = (m, ok) => $('#msg').innerHTML = `<div class="${ok ? 'ok' : 'err'}">${App.esc(m)}</div>`;
-const idLabel = () => $('#idnoLabel').textContent = $('#type').value === 'Student' ? 'Student ID number *' : 'Employee ID number *';
+const idLabel = () => {
+  const student = $('#type').value === 'Student';
+  $('#idnoLabel').textContent = student ? 'Student ID number *' : 'Employee ID number *';
+  $('#idno').placeholder = student ? '2XXXXXXX' : 'Employee ID number';
+};
 $('#type').onchange = () => { $('#studentOnly').hidden = $('#type').value !== 'Student'; idLabel(); };
 
 // ID photo: shrink it in the browser (max 1200 px, JPEG) so it uploads quickly and stays small in the database
