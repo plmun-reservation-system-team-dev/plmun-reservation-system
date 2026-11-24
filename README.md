@@ -104,3 +104,16 @@ Green and gold PLMun theme on a cream background. Client pages use a top navigat
 ## Email notification and chatbot
 - **Email:** when the admin approves a reservation, the borrower is emailed that it is ready for release (Borrowing & Dispatch also has a **Notify** button to resend). Set `MAIL_ENABLED = true` and your Gmail App Password in `config/config.php`. While it is `false`, emails are only written to `storage/mail.log`.
 - **Chatbot:** floating button on every logged-in page (`api/chat/chat.php`, `assets/js/chatbot.js`). Add `AI_API_KEY` in `config/config.php` to use Claude; without a key it answers with built-in rules from the database.
+
+## Account approval (student / employee ID check)
+
+Sign-up now asks for a **student ID number** (employee ID number for faculty and staff) and a **photo of the PLMun ID**.
+1. The person fills in the form and verifies their email with the code. Only then does the request reach the Property Office, as **Pending** (nobody sees it before the email is verified).
+2. They cannot log in while it is Pending.
+3. **Admin > Users**: a banner shows how many requests are waiting. Click **Review** to see the details and the ID photo, then **Approve** or **Reject** (with an optional note).
+4. The person is **emailed** the decision (approved: "your account is ready"; rejected: "double-check your details or visit the Property Office"). This email uses the same EmailJS setup as the "ready for release" notice, so there is nothing new to configure.
+5. Deleting a Rejected account frees the email and ID number, so the person can sign up again.
+
+**Updating an existing install**
+- **Supabase (GitHub Pages):** open SQL Editor, paste the whole updated `database/supabase_setup.sql` and Run it again. It is safe to repeat and keeps all data. Accounts that already exist stay Active.
+- **XAMPP (MySQL):** run `database/migrate_account_approval.sql` once in phpMyAdmin.
