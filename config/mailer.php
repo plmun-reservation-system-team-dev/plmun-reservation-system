@@ -105,3 +105,22 @@ function send_verification_code(string $to, string $name, string $code, int $min
     $text = "Hi $name,\n\nYour PLMun verification code is: $code\n\nIt expires in $minutes minutes. If you did not try to sign up, ignore this email.\n\nPLMun Property Office";
     return send_mail($to, 'Your PLMun verification code: ' . $code, $html, $text);
 }
+
+/** Email the person the Property Office's decision on their new account request. Returns [bool, message]. */
+function send_account_decision(string $to, string $name, bool $approved, string $reason = ''): array {
+    $h = fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+    $head = '<div style="font-family:Segoe UI,Arial,sans-serif;max-width:560px;margin:auto;border:1px solid #ebe4d2;border-radius:12px;overflow:hidden">'
+      . '<div style="background:#0e3a23;color:#fff;padding:18px 22px"><b style="font-size:18px">PLMun Property Office</b><br><span style="color:#f4c95d">Reservation &amp; Borrowing</span></div>'
+      . '<div style="padding:22px;color:#16261c;line-height:1.55"><p>Hi ' . $h($name) . ',</p>';
+    $foot = '<p style="color:#617066;font-size:13px">This is an automated message from the PLMun Reservation &amp; Borrowing System.</p></div></div>';
+    if ($approved) {
+        $html = $head . '<p>Good news! The Property Office has <b>approved your account</b>. It is ready to use.</p><p>You can now log in with your email and password and start reserving equipment.</p>' . $foot;
+        $text = "Hi $name,\n\nGood news! The Property Office has approved your account. It is ready to use. You can now log in with your email and password.\n\nPLMun Property Office";
+        return send_mail($to, 'Your PLMun account is ready', $html, $text);
+    }
+    $html = $head . '<p>We could not approve your PLMun account request.</p>' . ($reason !== '' ? '<p><b>Note from the office:</b> ' . $h($reason) . '</p>' : '')
+      . '<p>Please double-check that all the information you entered is correct (your name, ID number and a clear photo of your PLMun ID), or visit the Property Office for further assistance.</p>' . $foot;
+    $text = "Hi $name,\n\nWe could not approve your PLMun account request." . ($reason !== '' ? "\nNote from the office: $reason" : '')
+      . "\nPlease double-check that all the information you entered is correct (your name, ID number and a clear photo of your PLMun ID), or visit the Property Office for further assistance.\n\nPLMun Property Office";
+    return send_mail($to, 'Your PLMun account request was not approved', $html, $text);
+}
