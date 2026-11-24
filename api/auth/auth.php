@@ -19,6 +19,7 @@ if ($action === 'me') {
     refresh_overdue();
     if ($a['role'] === 'admin') {
         $a['notify'] = (int)q("SELECT COUNT(*) FROM reservation WHERE reservation_status='Pending'")->fetchColumn()
+                     + (int)q("SELECT COUNT(*) FROM users WHERE account_status='Pending'")->fetchColumn()
                      + (int)q("SELECT COUNT(*) FROM borrowing WHERE borrowing_status='Overdue'")->fetchColumn();
     } else {
         $a['notify'] = (int)q("SELECT COUNT(*) FROM penalty p JOIN borrowing b ON b.borrowing_id=p.borrowing_id
@@ -47,7 +48,8 @@ if ($action === 'login') {
     }
     if (!$row || !check_password($pass, $row['password'])) fail('Wrong email or password.', 401);
     if ($role === 'user') {
-        $msg = ['Pending' => 'Your account is still waiting for approval.',
+        $msg = ['Pending' => 'Your account request is still waiting for approval by the Property Office. We will email you as soon as it is approved.',
+                'Rejected' => 'Your account request was not approved. Please double-check that all your details and your ID photo are correct, or visit the Property Office for assistance.',
                 'Suspended' => 'Your account is suspended. Please see the Property Office.',
                 'Deactivated' => 'Your account is deactivated.'];
         if (isset($msg[$row['account_status']])) fail($msg[$row['account_status']], 403);
@@ -100,12 +102,20 @@ if ($action === 'register') {
     if (strlen($pass) < 6) fail('Password must be at least 6 characters.');
     $contact = s($b['contact_number'] ?? '');
     if ($contact !== '' && !preg_match('/^[0-9+\-\s]{7,20}$/', $contact)) fail('Contact number looks invalid.');
+    $idNo = s($b['id_number'] ?? ''); $photo = (string)($b['id_photo'] ?? '');
+    if ($idNo === '') fail($type === 'Student' ? 'Please enter your student ID number.' : 'Please enter your employee ID number.');
+    if (!preg_match('/^[A-Za-z0-9][A-Za-z0-9\-\/ ]{2,28}$/', $idNo)) fail('The ID number looks invalid. Use only letters, numbers and dashes.');
+    if (!preg_match('#^data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$#', $photo)) fail('Please upload a photo of your PLMun ID.');
+    if (strlen($photo) > 1400000) fail('That ID photo is too large. Please choose a smaller picture.');
     if (q("SELECT 1 FROM users WHERE email=?", [$email])->fetch() || q("SELECT 1 FROM admin WHERE email=?", [$email])->fetch())
         fail('That email is already registered.', 409);
+    if (q("SELECT 1 FROM users WHERE LOWER(id_number)=LOWER(?) AND account_status<>'Rejected'", [$idNo])->fetch())
+        fail('That ID number is already used by another account. If this is a mistake, please visit the Property Office.', 409);
     $_SESSION['pending_signup'] = [
         'last' => $last, 'first' => $first, 'first_name' => $first, 'mi' => $mi, 'email' => $email,
         'pass_hash' => password_hash($pass, PASSWORD_DEFAULT), 'type' => $type, 'contact' => $contact,
         'department' => s($b['department'] ?? ''), 'course' => s($b['course'] ?? ''), 'year' => s($b['year_level'] ?? ''),
+        'id_number' => $idNo, 'id_photo' => $photo,
     ];
     [$sent, $msg] = issue_verification_code();
     if (!$sent) { unset($_SESSION['pending_signup']); fail('We could not send the verification code. ' . $msg, 502); }
@@ -135,13 +145,15 @@ if ($action === 'verify_email') {
     }
     if (q("SELECT 1 FROM users WHERE email=?", [$p['email']])->fetch() || q("SELECT 1 FROM admin WHERE email=?", [$p['email']])->fetch())
         fail('That email is already registered.', 409);
-    q("INSERT INTO users (last_name,first_name,middle_initial,email,password,user_type,contact_number,department,course,year_level)
-       VALUES (?,?,?,?,?,?,?,?,?,?)",
+    // the e-mail is now confirmed, so the request goes to the Property Office as 'Pending'
+    q("INSERT INTO users (last_name,first_name,middle_initial,email,password,user_type,contact_number,department,course,year_level,id_number,id_photo,account_status)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,'Pending')",
       [$p['last'], $p['first'], $p['mi'] ?: null, $p['email'], $p['pass_hash'], $p['type'], $p['contact'] ?: null,
        $p['department'] ?: null,
        $p['type'] === 'Student' ? ($p['course'] ?: null) : null,
-       $p['type'] === 'Student' ? ($p['year'] ?: null) : null]);
+       $p['type'] === 'Student' ? ($p['year'] ?: null) : null,
+       $p['id_number'] ?? null, $p['id_photo'] ?? null]);
     unset($_SESSION['pending_signup']);
-    out(['message' => 'Email verified. Account created. You can log in now.'], 201);
+    out(['message' => 'Email verified. Your account request was sent to the Property Office. We will email you once it is approved.'], 201);
 }
 fail('Unknown action.', 404);
