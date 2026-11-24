@@ -25,7 +25,9 @@ CREATE TABLE users (
   department      VARCHAR(100),
   course          VARCHAR(100),
   year_level      VARCHAR(20),
-  account_status  ENUM('Pending','Active','Suspended','Deactivated') NOT NULL DEFAULT 'Active',
+  id_number       VARCHAR(30) NULL,          -- student / employee ID number given at sign-up
+  id_photo        MEDIUMTEXT NULL,           -- photo of the PLMun ID (small compressed picture, stored as text)
+  account_status  ENUM('Pending','Active','Rejected','Suspended','Deactivated') NOT NULL DEFAULT 'Active',
   created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
