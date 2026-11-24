@@ -21,3 +21,8 @@ body{background:var(--green-900)}
 .idprev img{max-width:180px;max-height:120px;border-radius:8px;border:1px solid var(--line,#e3dcc6);object-fit:cover}
 .idprev .linkbtn{background:none;border:0;padding:0;color:var(--red,#b3261e);font:inherit;font-weight:700;cursor:pointer}
 input[type=file]{width:100%;padding:9px;border:1px dashed var(--line,#cfc7ae);border-radius:10px;background:#fff;font:inherit}
+
+/* easier-to-hit ID number field: taller, 16px text (stops mobile zoom), clickable label, full-width tap area */
+#idno{min-height:50px;padding:14px 16px;font-size:16px;cursor:text;position:relative;z-index:1;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#idno::placeholder{color:#9aa39c;letter-spacing:.08em}
+label.f[for=idno]{cursor:pointer;padding:4px 0}
