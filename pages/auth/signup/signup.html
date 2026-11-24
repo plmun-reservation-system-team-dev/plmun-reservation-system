@@ -43,6 +43,11 @@
           <div class="field"><label class="f" for="type">I am a *</label><select id="type"><option>Student</option><option>Faculty</option><option>Staff</option></select></div>
           <div class="field"><label class="f" for="contact">Contact number</label><input id="contact" type="tel" autocomplete="tel" placeholder="09XXXXXXXXX"></div>
         </div>
+        <div class="field"><label class="f" for="idno" id="idnoLabel">Student ID number *</label><input id="idno" type="text" autocomplete="off" maxlength="30" placeholder="e.g. 22-12345" required></div>
+        <div class="field"><label class="f" for="idphoto">Photo of your PLMun ID *</label>
+          <input id="idphoto" type="file" accept="image/jpeg,image/png,image/webp" required>
+          <p class="muted small" style="margin:6px 0 0">A clear photo or scan of the front of your PLMun ID. The Property Office uses it to check your account.</p>
+          <div id="idprev" class="idprev" hidden><img alt="Preview of your ID photo"><button type="button" class="linkbtn" id="idclear">Remove</button></div></div>
         <div class="field"><label class="f" for="dept">Department / College</label><input id="dept" type="text" placeholder="e.g. CITCS"></div>
         <div class="row" id="studentOnly">
           <div class="field"><label class="f" for="course">Course</label><input id="course" type="text" placeholder="e.g. BSIT"></div>
@@ -52,12 +57,13 @@
           <div class="field"><label class="f" for="pw">Password *</label><input id="pw" type="password" autocomplete="new-password" minlength="6" required></div>
           <div class="field"><label class="f" for="pw2">Confirm password *</label><input id="pw2" type="password" autocomplete="new-password" required></div>
         </div>
+        <p class="muted small" style="margin:0 0 12px">After you verify your email, the Property Office reviews your details and ID. We email you when your account is approved.</p>
         <button class="btn block" id="go" type="submit">Create account</button>
       </form>
       <form id="vf" novalidate hidden>
         <p class="muted" id="vinfo"></p>
         <div class="field"><label class="f" for="code">Verification code</label><input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" style="letter-spacing:6px;font-size:1.4rem;text-align:center" required></div>
-        <button class="btn block" id="vgo" type="submit">Verify &amp; create account</button>
+        <button class="btn block" id="vgo" type="submit">Verify &amp; send request</button>
         <p class="alt"><button type="button" class="linkbtn" id="resend" style="background:none;border:0;padding:0;color:var(--green-700);font:inherit;font-weight:700;cursor:pointer">Resend code</button> · <button type="button" class="linkbtn" id="back" style="background:none;border:0;padding:0;color:var(--green-700);font:inherit;font-weight:700;cursor:pointer">Use a different email</button></p>
       </form>
       <p class="alt">Already registered? <a href="../../../index.html">Log in</a></p>
