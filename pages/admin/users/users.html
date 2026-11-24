@@ -13,9 +13,10 @@
 <body>
 <div id="nav"></div>
 <main class="page">
-  <div class="page-head"><div><h1 style="font-size:2.2rem">Users</h1><p>Registered students, faculty and staff. Suspend accounts that should not reserve.</p></div></div>
-  <div class="card toolbar" style="padding-bottom:8px;margin-bottom:16px"><div class="field" style="max-width:380px;margin:0"><label class="f" for="q">Search</label><input type="search" id="q" placeholder="Surname, first name or email"></div></div>
-  <div class="table-wrap"><table><thead><tr><th>Surname</th><th>First name</th><th>M.I.</th><th>Email</th><th>Type</th><th>Department</th><th>Contact</th><th class="right">Reservations</th><th class="right">Unpaid</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <div class="page-head"><div><h1 style="font-size:2.2rem">Users</h1><p>Review new account requests (check the ID, then approve or reject), and suspend accounts that should not reserve.</p></div></div>
+  <div id="banner"></div>
+  <div class="card toolbar" style="padding-bottom:8px;margin-bottom:16px;display:flex;gap:14px;flex-wrap:wrap"><div class="field" style="max-width:380px;margin:0;flex:1 1 260px"><label class="f" for="q">Search</label><input type="search" id="q" placeholder="Surname, first name, email or ID number"></div><div class="field" style="margin:0"><label class="f" for="fs">Status</label><select id="fs"><option value="">All</option><option>Pending</option><option>Active</option><option>Rejected</option><option>Suspended</option><option>Deactivated</option></select></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Surname</th><th>First name</th><th>M.I.</th><th>Email</th><th>ID no.</th><th>Type</th><th>Department</th><th>Contact</th><th class="right">Reservations</th><th class="right">Unpaid</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div>
 </main>
 <script src="../../../assets/js/app.js"></script>
 <script src="users.js"></script>

@@ -1,2 +1,11 @@
 td select{padding:6px 8px;font-size:.85rem;min-width:130px}
 .low{color:var(--red);font-weight:800}
+.banner{display:flex;align-items:center;gap:12px;background:var(--amber-bg);color:var(--amber);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-weight:700}
+.banner button{margin-left:auto}
+.rv{display:grid;grid-template-columns:1fr 1.2fr;gap:20px}
+.rv dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.92rem}
+.rv dt{color:var(--muted)}.rv dd{margin:0;font-weight:600;word-break:break-word}
+.rv .ph{background:#f6f1e3;border-radius:12px;min-height:200px;display:grid;place-items:center;overflow:hidden}
+.rv .ph img{max-width:100%;max-height:360px;display:block}
+.rv-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+@media(max-width:700px){.rv{grid-template-columns:1fr}}
